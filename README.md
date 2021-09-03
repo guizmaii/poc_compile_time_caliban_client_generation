@@ -1,2 +1,3 @@
-# poc_compile_time_caliban_client_generation
-[POC] Compile time Caliban client code generation from Caliban `GraphQL` server code
+# [POC] Compile time Caliban client code generation from Caliban `GraphQL` server code
+
+See: https://github.com/ghostdogpr/caliban/pull/1028
