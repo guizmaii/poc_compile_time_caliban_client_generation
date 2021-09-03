@@ -42,6 +42,7 @@ lazy val root =
 lazy val server =
   project
     .in(file("modules/server"))
+    .enablePlugins(CompileTimeCalibanServerPlugin)
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= Seq(zio, prelude) ++ calibanLibs)
 
@@ -57,8 +58,8 @@ lazy val calibanClient =
     .withId("caliban-client")
     .in(file("modules/caliban-client"))
     .settings(commonSettings: _*)
-    .enablePlugins(CompileTimeCalibanPlugin)
-    .settings(ctCaliban / ctCalibanGeneratorAppRef := Some("generator.CalibanClientGenerator"))
-    .settings(ctCaliban / ctCalibanPackageName := "io.guizmaii.poc.caliban.client.generated")
-    .settings(ctCaliban / ctCalibanClientName := "CalibanClient")
-    .dependsOn(server % Compile)
+    .enablePlugins(CompileTimeCalibanClientPlugin)
+    .settings(Compile / ctCaliban / ctCalibanServerProject := Some(server))
+    .settings(Compile / ctCaliban / ctCalibanGeneratorAppRef := "poc.generator.CalibanClientGenerator")
+    .settings(Compile / ctCaliban / ctCalibanPackageName := "io.guizmaii.poc.caliban.client.generated")
+    .settings(Compile / ctCaliban / ctCalibanClientName := "CalibanClient")

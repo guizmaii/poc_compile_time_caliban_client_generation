@@ -1,4 +1,4 @@
-package generator
+package poc.generator
 
 import caliban.tools.compiletime.CompileTime
 import io.guizmaii.poc.caliban.server.GraphQLApi
