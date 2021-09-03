@@ -57,7 +57,7 @@ lazy val calibanClient =
     .in(file("modules/caliban-client"))
     .settings(commonSettings: _*)
     .enablePlugins(CompileTimeCalibanPlugin)
-    .settings(ctCaliban / ctCalibanGeneratorAppRef := Some("generator.GenClientCode"))
+    .settings(ctCaliban / ctCalibanGeneratorAppRef := Some("generator.CalibanClientGenerator"))
     .settings(ctCaliban / ctCalibanPackageName := "io.guizmaii.poc.caliban.client.generated")
     .settings(ctCaliban / ctCalibanClientName := "CalibanClient")
     .dependsOn(server)
