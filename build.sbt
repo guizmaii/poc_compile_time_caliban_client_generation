@@ -49,6 +49,7 @@ lazy val client =
   project
     .in(file("modules/client"))
     .settings(commonSettings: _*)
+    .settings(libraryDependencies ++= sttp)
     .dependsOn(calibanClient)
 
 lazy val calibanClient =
@@ -60,4 +61,4 @@ lazy val calibanClient =
     .settings(ctCaliban / ctCalibanGeneratorAppRef := Some("generator.CalibanClientGenerator"))
     .settings(ctCaliban / ctCalibanPackageName := "io.guizmaii.poc.caliban.client.generated")
     .settings(ctCaliban / ctCalibanClientName := "CalibanClient")
-    .dependsOn(server)
+    .dependsOn(server % Compile)
