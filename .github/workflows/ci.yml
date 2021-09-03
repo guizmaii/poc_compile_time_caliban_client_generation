@@ -23,6 +23,7 @@ jobs:
           check-latest: true
       - name: Publish a local version of Caliban
         run: |
+          ls -al
           cd caliban
           sbt +publishM2
           cd ..
