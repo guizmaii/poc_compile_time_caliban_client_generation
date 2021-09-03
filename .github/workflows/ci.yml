@@ -7,11 +7,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: 'https://github.com/guizmaii/caliban'
+          ref: 'generate_from_code_2'
       - uses: coursier/cache-action@v6
       - uses: actions/setup-java@v2.3.0
         with:
           distribution: temurin
           java-version: 11
           check-latest: true
+      - name: Publish a local version of Caliban
+        run: |
+          cd caliban
+          sbt +publishM2
+          cd ..
       - name: Run tests
         run: sbt clean test
