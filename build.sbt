@@ -8,7 +8,7 @@ ThisBuild / organization               := "io.guizmaii.poc"
 ThisBuild / homepage                   := Some(url("https://www.conduktor.io/"))
 ThisBuild / licenses                   := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 ThisBuild / version                    := "0.0.1"
-ThisBuild / scalaVersion               := "2.13.6"
+ThisBuild / scalaVersion               := "2.12.13"                   // Must stay 2.12 because the plugin is compiled with 2.12
 ThisBuild / scalafmtCheck              := true
 ThisBuild / scalafmtSbtCheck           := true
 ThisBuild / semanticdbEnabled          := true
@@ -19,7 +19,6 @@ ThisBuild / scalafixDependencies ++= List(
   "com.github.vovapolu" %% "scaluzzi" % "0.1.20"
 )
 ThisBuild / resolvers += Resolver.mavenLocal
-ThisBuild / resolvers += Resolver.publishMavenLocal
 
 // ### App Modules ###
 
