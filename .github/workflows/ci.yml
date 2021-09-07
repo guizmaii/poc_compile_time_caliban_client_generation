@@ -26,6 +26,7 @@ jobs:
         run: |
           ls -al
           cd caliban
+          git tag -a v1.1.1-SNAPSHOT-23 -m "v1.1.1-SNAPSHOT-23"
           sbt +publishM2
           cd ..
       - name: Run tests
