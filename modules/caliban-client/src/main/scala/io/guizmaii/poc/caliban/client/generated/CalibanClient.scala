@@ -8,26 +8,14 @@ object CalibanClient {
 
   type ID = String
 
-  type Post
-  object Post {
-    def id[A](innerSelection: SelectionBuilder[PostId, A]): SelectionBuilder[Post, A]           =
-      _root_.caliban.client.SelectionBuilder.Field("id", Obj(innerSelection))
-    def author[A](innerSelection: SelectionBuilder[AuthorName, A]): SelectionBuilder[Post, A]   =
-      _root_.caliban.client.SelectionBuilder.Field("author", Obj(innerSelection))
-    def title[A](innerSelection: SelectionBuilder[PostTitle, A]): SelectionBuilder[Post, A]     =
-      _root_.caliban.client.SelectionBuilder.Field("title", Obj(innerSelection))
-    def content[A](innerSelection: SelectionBuilder[PostContent, A]): SelectionBuilder[Post, A] =
-      _root_.caliban.client.SelectionBuilder.Field("content", Obj(innerSelection))
+  type PostId
+  object PostId {
+    def id: SelectionBuilder[PostId, String] = _root_.caliban.client.SelectionBuilder.Field("id", Scalar())
   }
 
   type PostContent
   object PostContent {
     def content: SelectionBuilder[PostContent, String] = _root_.caliban.client.SelectionBuilder.Field("content", Scalar())
-  }
-
-  type PostId
-  object PostId {
-    def id: SelectionBuilder[PostId, String] = _root_.caliban.client.SelectionBuilder.Field("id", Scalar())
   }
 
   type PostTitle
@@ -40,13 +28,18 @@ object CalibanClient {
     def name: SelectionBuilder[AuthorName, String] = _root_.caliban.client.SelectionBuilder.Field("name", Scalar())
   }
 
-  case class AuthorNameInput(name: String)
-  object AuthorNameInput  {
-    implicit val encoder: ArgEncoder[AuthorNameInput] = new ArgEncoder[AuthorNameInput] {
-      override def encode(value: AuthorNameInput): __Value =
-        __ObjectValue(List("name" -> implicitly[ArgEncoder[String]].encode(value.name)))
-    }
+  type Post
+  object Post {
+    def id[A](innerSelection: SelectionBuilder[PostId, A]): SelectionBuilder[Post, A]           =
+      _root_.caliban.client.SelectionBuilder.Field("id", Obj(innerSelection))
+    def author[A](innerSelection: SelectionBuilder[AuthorName, A]): SelectionBuilder[Post, A]   =
+      _root_.caliban.client.SelectionBuilder.Field("author", Obj(innerSelection))
+    def title[A](innerSelection: SelectionBuilder[PostTitle, A]): SelectionBuilder[Post, A]     =
+      _root_.caliban.client.SelectionBuilder.Field("title", Obj(innerSelection))
+    def content[A](innerSelection: SelectionBuilder[PostContent, A]): SelectionBuilder[Post, A] =
+      _root_.caliban.client.SelectionBuilder.Field("content", Obj(innerSelection))
   }
+
   case class PostContentInput(content: String)
   object PostContentInput {
     implicit val encoder: ArgEncoder[PostContentInput] = new ArgEncoder[PostContentInput] {
@@ -59,6 +52,13 @@ object CalibanClient {
     implicit val encoder: ArgEncoder[PostTitleInput] = new ArgEncoder[PostTitleInput] {
       override def encode(value: PostTitleInput): __Value =
         __ObjectValue(List("title" -> implicitly[ArgEncoder[String]].encode(value.title)))
+    }
+  }
+  case class AuthorNameInput(name: String)
+  object AuthorNameInput  {
+    implicit val encoder: ArgEncoder[AuthorNameInput] = new ArgEncoder[AuthorNameInput] {
+      override def encode(value: AuthorNameInput): __Value =
+        __ObjectValue(List("name" -> implicitly[ArgEncoder[String]].encode(value.name)))
     }
   }
   type Query = _root_.caliban.client.Operations.RootQuery
@@ -101,3 +101,4 @@ object CalibanClient {
   }
 
 }
+
