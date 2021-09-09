@@ -61,10 +61,12 @@ lazy val calibanClient =
     .enablePlugins(CompileTimeCalibanClientPlugin)
     .settings(
       Compile / ctCaliban / ctCalibanSettings := (
-        server,
-        GenerateClientsSettings(
-          clientName = "CalibanClient",
-          packageName = "io.guizmaii.poc.caliban.client.generated"
+        (
+          server,
+          GenerateClientSettings(
+            clientName = "CalibanClient",
+            packageName = "io.guizmaii.poc.caliban.client.generated",
+          )
         )
       )
     )
