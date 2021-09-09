@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: 'guizmaii/caliban'
-          ref: 'generate_from_code_2'
+          ref: 'generate_from_code_5'
           path: 'caliban'
       - uses: coursier/cache-action@v6
       - uses: actions/setup-java@v2.3.0
@@ -28,7 +28,7 @@ jobs:
           cd caliban
           git config --global user.email "jules.ivanic@example.com"
           git config --global user.name "Jules Ivanic"
-          git tag -a v1.1.1-SNAPSHOT-23 -m "v1.1.1-SNAPSHOT-23"
+          git tag -a v1.1.1-SNAPSHOT-28 -m "v1.1.1-SNAPSHOT-28"
           sbt +publishM2
           cd ..
       - name: Run tests
