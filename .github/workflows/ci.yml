@@ -28,7 +28,7 @@ jobs:
           cd caliban
           git config --global user.email "jules.ivanic@example.com"
           git config --global user.name "Jules Ivanic"
-          git tag -a v1.1.1-SNAPSHOT-23 -m "v1.1.1-SNAPSHOT-28"
+          git tag -a v1.1.1-SNAPSHOT-28 -m "v1.1.1-SNAPSHOT-28"
           sbt +publishM2
           cd ..
       - name: Run tests
