@@ -4,7 +4,7 @@ import sbt.librarymanagement.Resolver
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-ThisBuild / organization               := "io.guizmaii.poc"
+ThisBuild / organization               := "Conduktor"
 ThisBuild / homepage                   := Some(url("https://www.conduktor.io/"))
 ThisBuild / licenses                   := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 ThisBuild / version                    := "0.0.1"
@@ -33,52 +33,65 @@ lazy val root =
     .settings(noDoc: _*)
     .settings(noPublishSettings: _*)
     .aggregate(
-      server,
-      client,
-      calibanClient,
+      posts,
+      potatoes,
+      clients,
+      calibanClients,
     )
 
-lazy val server =
+lazy val posts =
   project
-    .in(file("modules/server"))
+    .in(file("modules/posts"))
     .enablePlugins(CompileTimeCalibanServerPlugin)
     .settings(
       Compile / ctCalibanServer / ctCalibanServerSettings ++=
         Seq(
-          "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
+          "poc.caliban.posts.GraphQLApi.api" -> GenerateClientSettings.default,
+          "poc.caliban.posts.GraphQLApi.api" ->
             GenerateClientSettings(
-              packageName = "io.guizmaii.poc.caliban.client.generated",
+              packageName = "poc.caliban.client.generated.posts",
               clientName = "CalibanClient",
             ),
-          "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
+          "poc.caliban.posts.GraphQLApi.api" ->
             GenerateClientSettings(
-              packageName = "toto.generated",
-              clientName = "TotoClient",
-            ),
-          "io.guizmaii.poc.caliban.server.GraphQLApi.api" -> GenerateClientSettings.default,
-          "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
-            GenerateClientSettings(
-              packageName = "io.split",
+              packageName = "poc.caliban.client.generated.posts.splitted",
               splitFiles = true
             )
         )
     )
     .settings(commonSettings: _*)
-    .settings(libraryDependencies ++= calibanLibs)
+    .settings(libraryDependencies ++= calibanLib)
 
-lazy val client =
+lazy val potatoes =
   project
-    .in(file("modules/client"))
+    .in(file("modules/potatoes"))
+    .enablePlugins(CompileTimeCalibanServerPlugin)
+    .settings(
+      Compile / ctCalibanServer / ctCalibanServerSettings :=
+        Seq(
+          "poc.caliban.potatoes.PotatoesApi.api" ->
+            GenerateClientSettings(
+              packageName = "poc.caliban.client.generated.potatoes",
+              splitFiles = true
+            )
+        )
+    )
+    .settings(commonSettings: _*)
+    .settings(libraryDependencies ++= calibanLib)
+
+lazy val clients =
+  project
+    .in(file("modules/clients"))
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= sttp)
-    .dependsOn(calibanClient)
+    .dependsOn(calibanClients)
 
-lazy val calibanClient =
+lazy val calibanClients =
   project
-    .withId("caliban-client")
-    .in(file("modules/caliban-client"))
+    .withId("caliban-clients")
+    .in(file("modules/caliban-clients"))
     .settings(commonSettings: _*)
     .enablePlugins(CompileTimeCalibanClientPlugin)
     .settings(
-      Compile / ctCalibanClient / ctCalibanClientsSettings += server
+      Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(posts, potatoes)
     )

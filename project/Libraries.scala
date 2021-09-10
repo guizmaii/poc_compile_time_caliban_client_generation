@@ -5,7 +5,7 @@ object Libraries {
   val calibanVersion = "1.1.1"
   val sttpVersion    = "3.3.14"
 
-  val calibanLibs = Seq(
+  val calibanLib = Seq(
     "com.github.ghostdogpr" %% "caliban" % calibanVersion,
   )
 
