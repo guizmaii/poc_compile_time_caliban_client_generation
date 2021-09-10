@@ -43,12 +43,20 @@ lazy val server =
     .in(file("modules/server"))
     .enablePlugins(CompileTimeCalibanServerPlugin)
     .settings(
-      Compile / ctCalibanServer / ctCalibanServerSettings +=
-        "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
-          GenerateClientSettings(
-            clientName = "CalibanClient",
-            packageName = "io.guizmaii.poc.caliban.client.generated"
-          )
+      Compile / ctCalibanServer / ctCalibanServerSettings ++=
+        Seq(
+          "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
+            GenerateClientSettings(
+              clientName = "CalibanClient",
+              packageName = "io.guizmaii.poc.caliban.client.generated"
+            ),
+          "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
+            GenerateClientSettings(
+              clientName = "TotoClient",
+              packageName = "toto.generated"
+            ),
+          "io.guizmaii.poc.caliban.server.GraphQLApi.api" -> GenerateClientSettings.default
+        )
     )
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= calibanLibs)
