@@ -47,15 +47,20 @@ lazy val server =
         Seq(
           "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
             GenerateClientSettings(
-              clientName = "CalibanClient",
-              packageName = "io.guizmaii.poc.caliban.client.generated"
+              packageName = "io.guizmaii.poc.caliban.client.generated",
+              clientName = Some("CalibanClient"),
             ),
           "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
             GenerateClientSettings(
-              clientName = "TotoClient",
-              packageName = "toto.generated"
+              packageName = "toto.generated",
+              clientName = Some("TotoClient"),
             ),
-          "io.guizmaii.poc.caliban.server.GraphQLApi.api" -> GenerateClientSettings.default
+          "io.guizmaii.poc.caliban.server.GraphQLApi.api" -> GenerateClientSettings.default,
+          "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
+            GenerateClientSettings(
+              packageName = "io.split",
+              splitFiles = true
+            )
         )
     )
     .settings(commonSettings: _*)
