@@ -48,12 +48,12 @@ lazy val server =
           "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
             GenerateClientSettings(
               packageName = "io.guizmaii.poc.caliban.client.generated",
-              clientName = Some("CalibanClient"),
+              clientName = "CalibanClient",
             ),
           "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
             GenerateClientSettings(
               packageName = "toto.generated",
-              clientName = Some("TotoClient"),
+              clientName = "TotoClient",
             ),
           "io.guizmaii.poc.caliban.server.GraphQLApi.api" -> GenerateClientSettings.default,
           "io.guizmaii.poc.caliban.server.GraphQLApi.api" ->
