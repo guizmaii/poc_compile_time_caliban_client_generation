@@ -16,7 +16,6 @@ jobs:
           repository: 'guizmaii/caliban'
           ref: 'generate_from_code_5'
           path: 'caliban'
-      - uses: coursier/cache-action@v6
       - uses: actions/setup-java@v2.3.0
         with:
           distribution: temurin
