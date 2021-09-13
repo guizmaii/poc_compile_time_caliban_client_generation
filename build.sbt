@@ -46,14 +46,14 @@ lazy val posts =
     .settings(
       Compile / ctCalibanServer / ctCalibanServerSettings ++=
         Seq(
-          "poc.caliban.posts.GraphQLApi.api" -> GenerateClientSettings.default,
+          "poc.caliban.posts.GraphQLApi.api" -> ClientGenerationSettings.default,
           "poc.caliban.posts.GraphQLApi.api" ->
-            GenerateClientSettings(
+            ClientGenerationSettings(
               packageName = "poc.caliban.client.generated.posts",
               clientName = "CalibanClient",
             ),
           "poc.caliban.posts.GraphQLApi.api" ->
-            GenerateClientSettings(
+            ClientGenerationSettings(
               packageName = "poc.caliban.client.generated.posts.splitted",
               splitFiles = true
             )
@@ -70,7 +70,7 @@ lazy val potatoes =
       Compile / ctCalibanServer / ctCalibanServerSettings :=
         Seq(
           "poc.caliban.potatoes.PotatoesApi.api" ->
-            GenerateClientSettings(
+            ClientGenerationSettings(
               packageName = "poc.caliban.client.generated.potatoes",
               splitFiles = true
             )
