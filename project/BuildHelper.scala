@@ -13,11 +13,11 @@ object BuildHelper {
     },
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     (Test / parallelExecution) := true,
-    (Test / fork)              := true
+    (Test / fork) := true
   ) ++ noDoc
 
   lazy val noDoc = Seq(
-    (Compile / doc / sources)                := Seq.empty,
+    (Compile / doc / sources) := Seq.empty,
     (Compile / packageDoc / publishArtifact) := false
   )
 
@@ -25,9 +25,9 @@ object BuildHelper {
    * Copied from Cats
    */
   lazy val noPublishSettings = Seq(
-    publish         := {},
-    publishLocal    := {},
-    publishM2       := {},
+    publish := {},
+    publishLocal := {},
+    publishM2 := {},
     publishArtifact := false
   )
 
