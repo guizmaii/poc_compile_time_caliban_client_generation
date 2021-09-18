@@ -31,4 +31,4 @@ jobs:
           sbt +publishM2
           cd ..
       - name: Run tests
-        run: sbt clean test
+        run: sbt clean test "last caliban-clients / Compile / compileIncremental"
