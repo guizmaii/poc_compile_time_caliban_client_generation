@@ -19,6 +19,7 @@ ThisBuild / scalafixDependencies ++= List(
   "com.github.vovapolu" %% "scaluzzi" % "0.1.20"
 )
 ThisBuild / resolvers += Resolver.mavenLocal
+ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 
 // ### App Modules ###
 
