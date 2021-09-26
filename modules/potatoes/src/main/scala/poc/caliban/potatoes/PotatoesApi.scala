@@ -30,13 +30,13 @@ object Operations {
 object Resolvers {
   import Operations._
 
-  private val queries =
+  private val queries       =
     Query(
       byName = name => PotatoesService(_.findByName(name)),
       byColor = color => PotatoesService(_.findByColor(color)),
     )
 
-  private val mutations =
+  private val mutations     =
     Mutation(
       makeNewSpecies = args => PotatoesService(_.makeNewSpecies(args.name, args.color)),
       eradicate = name => PotatoesService(_.eradicate(name))

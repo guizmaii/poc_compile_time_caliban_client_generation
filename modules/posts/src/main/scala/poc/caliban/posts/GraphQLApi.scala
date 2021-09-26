@@ -29,12 +29,12 @@ object Operations {
 object Resolvers {
   import Operations._
 
-  private val queries =
+  private val queries       =
     Query(
       postById = id => PostService(_.findById(id))
     )
 
-  private val mutations =
+  private val mutations     =
     Mutation(
       createPost = args => PostService(_.createPost(args.authorName, args.title, args.content)),
       deletePost = id => PostService(_.deletePost(id))
