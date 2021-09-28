@@ -4,7 +4,7 @@ import zio._
 import zio.stream.ZStream
 
 final case class Potato(name: Potato.Name, color: Potato.Color)
-object Potato {
+object Potato               {
   final case class Name(value: String)
   sealed trait Color
   case object White  extends Color
