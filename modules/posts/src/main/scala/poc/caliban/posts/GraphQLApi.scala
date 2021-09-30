@@ -13,7 +13,7 @@ object Operations {
   final case class CreatePostMutationParams(authorName: AuthorName, title: PostTitle, content: PostContent)
 
   final case class Query(
-    postById: PostId => ZIO[Has[PostService], PostServiceError, Post]
+    postById: PostId => ZIO[Has[PostService], PostServiceError, Option[Post]]
   )
 
   final case class Mutation(
@@ -31,7 +31,7 @@ object Resolvers {
 
   private val queries       =
     Query(
-      postById = id => PostService(_.findById(id).map(_.get))
+      postById = id => PostService(_.findById(id))
     )
 
   private val mutations     =
