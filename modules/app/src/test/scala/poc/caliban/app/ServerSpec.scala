@@ -8,7 +8,7 @@ object ServerSpec extends DefaultRunnableSpec {
 
   private val calibanServerSpec                  =
     suite("Caliban server Spec")(
-      test("truthiness")(assert(true)(isFalse))
+      test("truthiness")(assert(true)(isTrue))
     )
 
   override def spec: ZSpec[TestEnvironment, Any] =
