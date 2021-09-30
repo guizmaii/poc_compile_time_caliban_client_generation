@@ -4,7 +4,7 @@ import sbt.{Compile, _}
 
 object BuildHelper {
 
-  val commonSettings = Seq(
+  lazy val commonSettings = Seq(
     libraryDependencies += compilerPlugin("org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full),
     addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
     javacOptions ++= Seq("-source", "11", "-target", "11"),
@@ -12,6 +12,7 @@ object BuildHelper {
       if (insideCI.value) Nil else Seq("-Xfatal-warnings") // enforced by the pre-push hook too
     },
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+    libraryDependencies ++= Libraries.tests,
     (Test / parallelExecution) := true,
     (Test / fork)              := true
   ) ++ noDoc
