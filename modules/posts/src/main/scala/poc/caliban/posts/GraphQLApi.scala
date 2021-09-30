@@ -31,7 +31,7 @@ object Resolvers {
 
   private val queries       =
     Query(
-      postById = id => PostService(_.findById(id))
+      postById = id => PostService(_.findById(id).map(_.get))
     )
 
   private val mutations     =
@@ -57,9 +57,7 @@ object GraphQLApi {
   import Schemas._
 
   val api: GraphQL[ZEnv with Has[PostService]] =
-    graphQL(
-      Resolvers.resolver
-    ) @@
+    graphQL(Resolvers.resolver) @@
       maxFields(200) @@
       maxDepth(30) @@
       timeout(5.seconds) @@

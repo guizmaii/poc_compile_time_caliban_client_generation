@@ -34,11 +34,19 @@ lazy val root           =
     .settings(noDoc: _*)
     .settings(noPublishSettings: _*)
     .aggregate(
+      app,
       posts,
       potatoes,
       clients,
       calibanClients,
     )
+
+lazy val app            =
+  project
+    .in(file("modules/app"))
+    .settings(commonSettings: _*)
+    .settings(libraryDependencies ++= Seq(zioMagic) ++ http4s ++ sttp.map(_ % Test))
+    .dependsOn(posts, calibanClients % Test)
 
 lazy val posts          =
   project
