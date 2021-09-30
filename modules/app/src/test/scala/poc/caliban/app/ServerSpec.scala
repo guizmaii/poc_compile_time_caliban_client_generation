@@ -16,6 +16,8 @@ import zio.test._
 import zio.test.environment.TestEnvironment
 import zio.{Managed, Task, ZIO}
 
+import java.util.UUID
+
 object ServerSpec extends DefaultRunnableSpec {
   import sttp.client3.httpclient.zio.HttpClientZioBackend
 
@@ -51,7 +53,7 @@ object ServerSpec extends DefaultRunnableSpec {
       },
       testM("Fetch a non existing post returns None") {
         withServer { backend =>
-          val query: SelectionBuilder[RootQuery, Option[String]] = Query.postById("abcd")(Post.id(PostId.id))
+          val query: SelectionBuilder[RootQuery, Option[String]] = Query.postById(UUID.randomUUID().toString)(Post.id(PostId.id))
 
           val response = query.toRequest(apiUrl).send(backend)
 
