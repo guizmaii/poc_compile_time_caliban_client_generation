@@ -8,7 +8,7 @@ import poc.caliban.posts.PostService
 import zio.magic._
 import zio.{ExitCode, Has, RIO, URIO, ZEnv, ZManaged}
 
-class Main extends zio.App {
+object Main extends zio.App {
   import org.http4s.implicits._
   import zio.interop.catz._
 

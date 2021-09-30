@@ -12,12 +12,12 @@ object BuildHelper {
       if (insideCI.value) Nil else Seq("-Xfatal-warnings") // enforced by the pre-push hook too
     },
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
-    libraryDependencies ++= Libraries.tests,
+    libraryDependencies ++= Libraries.tests.map(_ % Test),
     (Test / parallelExecution) := true,
     (Test / fork)              := true
   ) ++ noDoc
 
-  lazy val noDoc     = Seq(
+  lazy val noDoc          = Seq(
     (Compile / doc / sources)                := Seq.empty,
     (Compile / packageDoc / publishArtifact) := false
   )

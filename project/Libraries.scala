@@ -29,8 +29,8 @@ object Libraries {
   )
 
   val sttp = Seq(
-    "com.softwaremill.sttp.client3" %% "core"                          % sttpVersion,
-    "com.softwaremill.sttp.client3" %% "async-http-client-backend-zio" % sttpVersion
+    "com.softwaremill.sttp.client3" %% "core"                   % sttpVersion,
+    "com.softwaremill.sttp.client3" %% "httpclient-backend-zio" % sttpVersion
   )
 
 }
