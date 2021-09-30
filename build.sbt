@@ -45,7 +45,7 @@ lazy val app            =
   project
     .in(file("modules/app"))
     .settings(commonSettings: _*)
-    .settings(libraryDependencies ++= http4s)
+    .settings(libraryDependencies ++= Seq(zioMagic) ++ http4s)
     .dependsOn(posts, calibanClients % Test)
 
 lazy val posts          =

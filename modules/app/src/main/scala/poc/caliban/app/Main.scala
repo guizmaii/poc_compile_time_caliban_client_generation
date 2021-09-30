@@ -4,17 +4,20 @@ import caliban.Http4sAdapter
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.server.Router
 import org.http4s.{HttpRoutes, StaticFile}
-import zio.{ExitCode, RIO, URIO, ZEnv, ZManaged}
+import poc.caliban.posts.PostService
+import zio.magic._
+import zio.{ExitCode, Has, RIO, URIO, ZEnv, ZManaged}
 
 class Main extends zio.App {
   import org.http4s.implicits._
   import zio.interop.catz._
 
-  type LocalTask[A] = RIO[ZEnv, A]
+  type R            = ZEnv with Has[PostService]
+  type LocalTask[A] = RIO[R, A]
 
-  val server: ZManaged[ZEnv, Throwable, Unit]                =
+  val server: ZManaged[ZEnv with Has[PostService], Throwable, Unit] =
     for {
-      runtime     <- ZManaged.runtime[Any]
+      runtime     <- ZManaged.runtime[R]
       interpreter <- ZManaged.fromEffect(poc.caliban.posts.GraphQLApi.api.interpreter)
       _           <- BlazeServerBuilder[LocalTask](runtime.platform.executor.asEC)
                        .bindHttp(8080, "0.0.0.0")
@@ -29,6 +32,7 @@ class Main extends zio.App {
                        .toManagedZIO
     } yield ()
 
-  override def run(args: List[String]): URIO[ZEnv, ExitCode] = server.useForever.exitCode
+  override def run(args: List[String]): URIO[ZEnv, ExitCode]        =
+    server.useForever.exitCode.injectSome(PostService.layer)
 
 }

@@ -7,6 +7,8 @@ object Libraries {
   val http4sVersion  = "0.23.4"
   val zioVersion     = "1.0.12"
 
+  val zioMagic = "io.github.kitlangton" %% "zio-magic" % "0.3.9"
+
   val http4s = Seq(
     "org.http4s" %% "http4s-core"         % http4sVersion,
     "org.http4s" %% "http4s-blaze-server" % http4sVersion,
