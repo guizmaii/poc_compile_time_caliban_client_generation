@@ -29,7 +29,7 @@ ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
  *
  * The `aggregate` setting will instruct sbt that when you're launching an sbt command, you want it applied to all the aggregated modules
  */
-lazy val root           =
+lazy val root =
   Project(id = "poc_compile_time_caliban_client_generation", base = file("."))
     .settings(noDoc: _*)
     .settings(noPublishSettings: _*)
@@ -41,14 +41,14 @@ lazy val root           =
       calibanClients,
     )
 
-lazy val app            =
+lazy val app =
   project
     .in(file("modules/app"))
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= Seq(zioMagic) ++ http4s ++ sttp.map(_ % Test))
     .dependsOn(posts, calibanClients % Test)
 
-lazy val posts          =
+lazy val posts =
   project
     .in(file("modules/posts"))
     .enablePlugins(CompileTimeCalibanServerPlugin)
@@ -71,7 +71,7 @@ lazy val posts          =
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= calibanLib)
 
-lazy val potatoes       =
+lazy val potatoes =
   project
     .in(file("modules/potatoes"))
     .enablePlugins(CompileTimeCalibanServerPlugin)
@@ -88,7 +88,7 @@ lazy val potatoes       =
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= calibanLib)
 
-lazy val clients        =
+lazy val clients =
   project
     .in(file("modules/clients"))
     .settings(commonSettings: _*)

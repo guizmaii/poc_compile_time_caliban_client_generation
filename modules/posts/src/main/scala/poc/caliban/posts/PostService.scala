@@ -9,7 +9,7 @@ import scala.collection.concurrent.TrieMap
 import scala.collection.mutable
 
 final case class PostId(id: UUID)
-object PostId           {
+object PostId {
   def newRandom: PostId = PostId(id = UUID.randomUUID())
 }
 final case class AuthorName(name: String)
@@ -31,11 +31,11 @@ trait PostService {
   def all: ZStream[Any, PostServiceError, Post]
 }
 
-object PostService          extends Accessible[PostService] {
+object PostService extends Accessible[PostService] {
   val layer: ULayer[Has[PostService]] = ZLayer.succeed(new PostServiceLive)
 }
 
-final class PostServiceLive extends PostService             {
+final class PostServiceLive extends PostService {
   private val db: mutable.Map[PostId, Post] = TrieMap.empty[PostId, Post]
 
   override def findById(id: PostId): IO[PostServiceError, Option[Post]] = IO(db.get(id)).mapError(SomethingWentWrong)
@@ -48,9 +48,9 @@ final class PostServiceLive extends PostService             {
       newPost
     }.mapError(SomethingWentWrong)
 
-  override def deletePost(id: PostId): IO[PostServiceError, Unit]                                                 =
+  override def deletePost(id: PostId): IO[PostServiceError, Unit] =
     IO(db.remove(id)).unit.mapError(SomethingWentWrong)
 
-  override def all: ZStream[Any, PostServiceError, Post]                                                          =
+  override def all: ZStream[Any, PostServiceError, Post] =
     ZStream.fromIterable(db.values)
 }

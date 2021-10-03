@@ -42,7 +42,7 @@ object ServerSpec extends DefaultRunnableSpec {
         )
       )(Post.id(PostId.id))
 
-  private val calibanServerSpec                                              =
+  private val calibanServerSpec =
     suite("Caliban server Spec")(
       test("truthiness")(assert(true)(isTrue)),
       testM("Create a post returns a 200") {
@@ -75,7 +75,7 @@ object ServerSpec extends DefaultRunnableSpec {
       },
     ) @@ sequential
 
-  override def spec: ZSpec[TestEnvironment, Any]                             =
+  override def spec: ZSpec[TestEnvironment, Any] =
     suite("Server Spec")(
       calibanServerSpec,
     )
