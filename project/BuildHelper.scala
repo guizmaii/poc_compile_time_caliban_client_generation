@@ -17,7 +17,7 @@ object BuildHelper {
     (Test / fork)              := true
   ) ++ noDoc
 
-  lazy val noDoc          = Seq(
+  lazy val noDoc = Seq(
     (Compile / doc / sources)                := Seq.empty,
     (Compile / packageDoc / publishArtifact) := false
   )

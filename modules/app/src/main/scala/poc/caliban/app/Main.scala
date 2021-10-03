@@ -32,7 +32,7 @@ object Main extends zio.App {
                        .toManagedZIO
     } yield ()
 
-  override def run(args: List[String]): URIO[ZEnv, ExitCode]        =
+  override def run(args: List[String]): URIO[ZEnv, ExitCode] =
     server.useForever.exitCode.injectSome(PostService.layer)
 
 }
