@@ -17,9 +17,8 @@ object Main extends zio.App {
 
   val server: ZManaged[ZEnv with Has[PostService], Throwable, Unit] =
     for {
-      runtime     <- ZManaged.runtime[R]
       interpreter <- ZManaged.fromEffect(poc.caliban.posts.GraphQLApi.api.interpreter)
-      _           <- BlazeServerBuilder[LocalTask](runtime.platform.executor.asEC)
+      _           <- BlazeServerBuilder[LocalTask]
                        .bindHttp(8080, "0.0.0.0")
                        .withHttpApp(
                          Router[LocalTask](
