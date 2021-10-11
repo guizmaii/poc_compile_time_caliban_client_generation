@@ -7,6 +7,19 @@ on:
     branches: ["*"]
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: coursier/cache-action@v6
+      - uses: actions/setup-java@v2.3.1
+        with:
+          distribution: temurin
+          java-version: 11
+          check-latest: true
+      - name: Run scalafix and scalafmt
+        run: sbt ';scalafixAll --check ;scalafmtCheckAll '
+
   ci:
     runs-on: ubuntu-latest
     steps:
