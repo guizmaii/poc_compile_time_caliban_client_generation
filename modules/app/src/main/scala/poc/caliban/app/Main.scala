@@ -9,7 +9,6 @@ import zio.magic._
 import zio.{ExitCode, Has, RIO, URIO, ZEnv, ZManaged}
 
 object Main extends zio.App {
-  import org.http4s.implicits._
   import zio.interop.catz._
 
   type R            = ZEnv with Has[PostService]
@@ -20,10 +19,10 @@ object Main extends zio.App {
       interpreter <- ZManaged.fromEffect(poc.caliban.posts.GraphQLApi.api.interpreter)
       _           <- BlazeServerBuilder[LocalTask]
                        .bindHttp(8080, "0.0.0.0")
-                       .withHttpApp(
+                       .withHttpWebSocketApp(builder =>
                          Router[LocalTask](
                            "/api/graphql" -> Http4sAdapter.makeHttpService(interpreter),
-                           "/ws/graphql"  -> Http4sAdapter.makeWebSocketService(interpreter),
+                           "/ws/graphql"  -> Http4sAdapter.makeWebSocketService(builder, interpreter),
                            "/graphiql"    -> HttpRoutes.liftF(StaticFile.fromResource("/graphiql.html", None))
                          ).orNotFound
                        )
