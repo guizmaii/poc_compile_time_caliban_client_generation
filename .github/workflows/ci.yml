@@ -11,24 +11,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-#      - uses: actions/checkout@v2
-#        with:
-#          repository: 'guizmaii/caliban'
-#          ref: 'generate_from_code_5'
-#          path: 'caliban'
+      - uses: actions/checkout@v2
+        with:
+          repository: 'guizmaii/caliban'
+          ref: 'ctCalibanClientsVersionedCode'
+          path: 'caliban'
       - uses: actions/setup-java@v2.3.1
         with:
           distribution: temurin
           java-version: 11
           check-latest: true
-#      - name: Publish a local version of Caliban
-#        run: |
-#          ls -al
-#          cd caliban
-#          git config --global user.email "jules.ivanic@example.com"
-#          git config --global user.name "Jules Ivanic"
-#          git tag -a v1.1.1-SNAPSHOT-40 -m "v1.1.1-SNAPSHOT-40"
-#          sbt +publishM2
-#          cd ..
+      - name: Publish a local version of Caliban
+        run: |
+          ls -al
+          cd caliban
+          git config --global user.email "jules.ivanic@example.com"
+          git config --global user.name "Jules Ivanic"
+          git tag -a v1.2.0-SNAPSHOT-304 -m "v1.2.0-SNAPSHOT-304"
+          sbt +publishM2
+          cd ..
       - name: Run tests
         run: sbt clean test

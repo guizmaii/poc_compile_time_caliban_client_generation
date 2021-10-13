@@ -1,5 +1,6 @@
 import BuildHelper._
 import Libraries._
+import sbt.Compile
 import sbt.librarymanagement.Resolver
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -38,7 +39,8 @@ lazy val root =
       posts,
       potatoes,
       clients,
-      calibanClients,
+      postsClients,
+      potatoesClients,
     )
 
 lazy val app =
@@ -46,7 +48,7 @@ lazy val app =
     .in(file("modules/app"))
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= Seq(zioMagic) ++ http4s ++ sttp.map(_ % Test))
-    .dependsOn(posts, calibanClients % Test)
+    .dependsOn(posts, postsClients % Test, potatoesClients % Test)
 
 lazy val posts =
   project
@@ -64,7 +66,8 @@ lazy val posts =
           "poc.caliban.posts.GraphQLApi.api" ->
             ClientGenerationSettings(
               packageName = "poc.caliban.client.generated.posts.splitted",
-              splitFiles = true
+              splitFiles = true,
+              genView = true
             )
         )
     )
@@ -93,14 +96,25 @@ lazy val clients =
     .in(file("modules/clients"))
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= sttp)
-    .dependsOn(calibanClients)
+    .dependsOn(postsClients, potatoesClients)
 
-lazy val calibanClients =
+lazy val postsClients =
   project
-    .withId("caliban-clients")
-    .in(file("modules/caliban-clients"))
+    .withId("posts-clients")
+    .in(file("modules/posts-clients"))
     .settings(commonSettings: _*)
     .enablePlugins(CompileTimeCalibanClientPlugin)
     .settings(
-      Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(posts, potatoes)
+      Compile / ctCalibanClient / ctCalibanClientsSettings      := Seq(posts),
+      Compile / ctCalibanClient / ctCalibanClientsVersionedCode := false
+    )
+
+lazy val potatoesClients =
+  project
+    .withId("potatoes-clients")
+    .in(file("modules/potatoes-clients"))
+    .settings(commonSettings: _*)
+    .enablePlugins(CompileTimeCalibanClientPlugin)
+    .settings(
+      Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(potatoes)
     )
