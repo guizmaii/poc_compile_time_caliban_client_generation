@@ -4,7 +4,7 @@ resolvers += Resolver.mavenLocal
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 addSbtPlugin("com.github.sbt"            % "sbt-native-packager" % "1.9.6")
-addSbtPlugin("ch.epfl.scala"             % "sbt-scalafix"        % "0.9.31")
+addSbtPlugin("ch.epfl.scala"             % "sbt-scalafix"        % "0.9.32")
 addSbtPlugin("org.scalameta"             % "sbt-scalafmt"        % "2.4.3")
 addSbtPlugin("pl.project13.scala"        % "sbt-jmh"             % "0.4.3")
 addSbtPlugin("com.timushev.sbt"          % "sbt-updates"         % "0.6.0")
