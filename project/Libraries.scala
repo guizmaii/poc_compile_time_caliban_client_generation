@@ -20,7 +20,7 @@ object Libraries {
     "dev.zio" %% "zio-test"          % zioVersion,
     "dev.zio" %% "zio-test-sbt"      % zioVersion,
     "dev.zio" %% "zio-test-magnolia" % zioVersion,
-    "dev.zio" %% "zio-interop-cats"  % "3.1.1.0",
+    "dev.zio" %% "zio-interop-cats"  % "3.2.9.0",
   )
 
   val calibanLib = Seq(
