@@ -4,7 +4,7 @@ object Libraries {
 
   val calibanVersion = "1.3.3"
   val sttpVersion    = "3.4.1"
-  val http4sVersion  = "0.23.9"
+  val http4sVersion  = "0.23.10"
   val zioVersion     = "1.0.13"
 
   val zioMagic = "io.github.kitlangton" %% "zio-magic" % "0.3.11"
