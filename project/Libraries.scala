@@ -2,7 +2,7 @@ import sbt._
 
 object Libraries {
 
-  val calibanVersion = "1.3.3"
+  val calibanVersion = "1.4.0"
   val sttpVersion    = "3.5.0"
   val http4sVersion  = "0.23.10"
   val zioVersion     = "1.0.13"
