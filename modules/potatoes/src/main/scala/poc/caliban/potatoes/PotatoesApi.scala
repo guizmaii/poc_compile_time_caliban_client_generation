@@ -14,12 +14,12 @@ object Operations {
 
   final case class Query(
     byName: Potato.Name => ZIO[Has[PotatoesService], PotatoesServiceError, Option[Potato]],
-    byColor: Potato.Color => ZIO[Has[PotatoesService], PotatoesServiceError, List[Potato]]
+    byColor: Potato.Color => ZIO[Has[PotatoesService], PotatoesServiceError, List[Potato]],
   )
 
   final case class Mutation(
     makeNewSpecies: MakeNewSpeciesMutationParams => ZIO[Has[PotatoesService], PotatoesServiceError, Potato],
-    eradicate: Potato.Name => ZIO[Has[PotatoesService], PotatoesServiceError, Unit]
+    eradicate: Potato.Name => ZIO[Has[PotatoesService], PotatoesServiceError, Unit],
   )
 
   final case class Subscription(
@@ -39,7 +39,7 @@ object Resolvers {
   private val mutations =
     Mutation(
       makeNewSpecies = args => PotatoesService(_.makeNewSpecies(args.name, args.color)),
-      eradicate = name => PotatoesService(_.eradicate(name))
+      eradicate = name => PotatoesService(_.eradicate(name)),
     )
 
   private val subscriptions =

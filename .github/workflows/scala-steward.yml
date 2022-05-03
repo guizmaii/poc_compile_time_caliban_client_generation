@@ -17,7 +17,7 @@ jobs:
 #          path: 'caliban'
 #      - uses: actions/setup-java@v2.3.0
 #        with:
-#          distribution: temurin
+#          distribution: zulu
 #          java-version: 11
 #          check-latest: true
 #      - name: Publish a local version of Caliban

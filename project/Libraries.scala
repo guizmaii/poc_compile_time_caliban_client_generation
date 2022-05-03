@@ -2,18 +2,27 @@ import sbt._
 
 object Libraries {
 
-  val calibanVersion = "1.4.0"
-  val sttpVersion    = "3.5.2"
-  val http4sVersion  = "0.23.11"
-  val zioVersion     = "1.0.14"
+  val calibanVersion       = "1.4.0"
+  val sttpVersion          = "3.5.2"
+  val http4sVersion        = "0.23.11"
+  val zioVersion           = "1.0.14"
+  val openTelemetryVersion = "1.13.0"
+  val slf4jVersion         = "1.7.36"
 
-  val zioMagic = "io.github.kitlangton" %% "zio-magic" % "0.3.12"
+  val zio          = Seq(
+    "dev.zio"              %% "zio"       % zioVersion,
+    "io.github.kitlangton" %% "zio-magic" % "0.3.12",
+  )
+  val zioMagic     = "io.github.kitlangton" %% "zio-magic"         % "0.3.12"
+  val zioTelemetry = "dev.zio"              %% "zio-opentelemetry" % "1.0.0"
 
-  val http4s = Seq(
-    "org.http4s" %% "http4s-core"         % http4sVersion,
-    "org.http4s" %% "http4s-blaze-server" % http4sVersion,
-    "org.http4s" %% "http4s-circe"        % http4sVersion,
-    "org.http4s" %% "http4s-dsl"          % http4sVersion,
+  val logging = Seq(
+    "dev.zio"             %% "zio-logging-slf4j"        % "0.5.14",
+    "ch.qos.logback"       % "logback-classic"          % "1.2.11",
+    "net.logstash.logback" % "logstash-logback-encoder" % "7.1.1",
+    "org.slf4j"            % "jul-to-slf4j"             % slf4jVersion,
+    "org.slf4j"            % "log4j-over-slf4j"         % slf4jVersion,
+    "org.slf4j"            % "jcl-over-slf4j"           % slf4jVersion,
   )
 
   val tests = Seq(
@@ -24,13 +33,25 @@ object Libraries {
   )
 
   val calibanLib = Seq(
-    "com.github.ghostdogpr" %% "caliban"        % calibanVersion,
-    "com.github.ghostdogpr" %% "caliban-http4s" % calibanVersion,
+    "com.github.ghostdogpr" %% "caliban"          % calibanVersion,
+    "com.github.ghostdogpr" %% "caliban-zio-http" % calibanVersion,
+    "com.github.ghostdogpr" %% "caliban-tools"    % calibanVersion,
   )
 
   val sttp = Seq(
     "com.softwaremill.sttp.client3" %% "core"                    % sttpVersion,
-    "com.softwaremill.sttp.client3" %% "httpclient-backend-zio1" % sttpVersion
+    "com.softwaremill.sttp.client3" %% "httpclient-backend-zio1" % sttpVersion,
   )
 
+  /**
+   * See:
+   * - "Setting up OTLP exporters" in https://github.com/open-telemetry/opentelemetry-java-docs
+   * - https://github.com/open-telemetry/opentelemetry-java-docs/tree/main/otlp
+   */
+  val openTelemetryExporter = Seq(
+    "io.opentelemetry" % "opentelemetry-api"                % openTelemetryVersion,
+    "io.opentelemetry" % "opentelemetry-sdk"                % openTelemetryVersion,
+    "io.opentelemetry" % "opentelemetry-exporter-otlp"      % openTelemetryVersion,
+    "io.opentelemetry" % "opentelemetry-extension-noop-api" % s"$openTelemetryVersion-alpha",
+  )
 }
