@@ -21,6 +21,10 @@ ThisBuild / scalafixDependencies ++= List(
 ThisBuild / resolvers += Resolver.mavenLocal
 ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
 
+// ### Aliases ###
+
+addCommandAlias("startApp", "app/reStart")
+
 // ### App Modules ###
 
 /**
@@ -31,6 +35,7 @@ ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
  */
 lazy val root =
   Project(id = "poc_compile_time_caliban_client_generation", base = file("."))
+    .disablePlugins(RevolverPlugin)
     .settings(noDoc: _*)
     .settings(noPublishSettings: _*)
     .aggregate(
@@ -39,19 +44,27 @@ lazy val root =
       potatoes,
       clients,
       calibanClients,
+      tracing,
     )
 
 lazy val app =
   project
     .in(file("modules/app"))
+    .enablePlugins(JavaAppPackaging, DockerPlugin, DatadogAPM)
+    .enablePlugins(RevolverPlugin)
+    .settings(Revolver.enableDebugging())
     .settings(commonSettings: _*)
-    .settings(libraryDependencies ++= Seq(zioMagic) ++ http4s ++ sttp.map(_ % Test))
-    .dependsOn(posts, calibanClients % Test)
+    .settings(sbtDatadogSettings: _*)
+    .settings(dockerSettings: _*)
+    .settings(Compile / mainClass := Some("poc.caliban.app.Main"))
+    .settings(libraryDependencies ++= Seq(zioMagic) ++ calibanLib ++ sttp.map(_ % Test))
+    .dependsOn(posts, tracing, calibanClients % Test)
 
 lazy val posts =
   project
     .in(file("modules/posts"))
     .enablePlugins(CompileTimeCalibanServerPlugin)
+    .disablePlugins(RevolverPlugin)
     .settings(
       Compile / ctCalibanServer / ctCalibanServerSettings ++=
         Seq(
@@ -64,24 +77,26 @@ lazy val posts =
           "poc.caliban.posts.GraphQLApi.api" ->
             ClientGenerationSettings(
               packageName = "poc.caliban.client.generated.posts.splitted",
-              splitFiles = true
-            )
+              splitFiles = true,
+            ),
         )
     )
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= calibanLib)
+    .dependsOn(tracing)
 
 lazy val potatoes =
   project
     .in(file("modules/potatoes"))
     .enablePlugins(CompileTimeCalibanServerPlugin)
+    .disablePlugins(RevolverPlugin)
     .settings(
       Compile / ctCalibanServer / ctCalibanServerSettings :=
         Seq(
           "poc.caliban.potatoes.PotatoesApi.api" ->
             ClientGenerationSettings(
               packageName = "poc.caliban.client.generated.potatoes",
-              splitFiles = true
+              splitFiles = true,
             )
         )
     )
@@ -91,6 +106,7 @@ lazy val potatoes =
 lazy val clients =
   project
     .in(file("modules/clients"))
+    .disablePlugins(RevolverPlugin)
     .settings(commonSettings: _*)
     .settings(libraryDependencies ++= sttp)
     .dependsOn(calibanClients)
@@ -99,8 +115,17 @@ lazy val calibanClients =
   project
     .withId("caliban-clients")
     .in(file("modules/caliban-clients"))
-    .settings(commonSettings: _*)
     .enablePlugins(CompileTimeCalibanClientPlugin)
+    .disablePlugins(RevolverPlugin)
+    .settings(commonSettings: _*)
     .settings(
       Compile / ctCalibanClient / ctCalibanClientsSettings := Seq(posts, potatoes)
     )
+
+lazy val tracing =
+  project
+    .withId("tracing")
+    .in(file("modules/tracing"))
+    .disablePlugins(RevolverPlugin)
+    .settings(commonSettings: _*)
+    .settings(libraryDependencies ++= Seq(zioTelemetry) ++ zio ++ openTelemetryExporter ++ calibanLib ++ logging)

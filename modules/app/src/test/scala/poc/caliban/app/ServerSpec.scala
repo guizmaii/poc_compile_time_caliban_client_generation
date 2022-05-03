@@ -4,22 +4,31 @@ import caliban.client.Operations.{RootMutation, RootQuery}
 import caliban.client.SelectionBuilder
 import poc.caliban.client.generated.posts.CalibanClient._
 import poc.caliban.posts.PostService
+import poc.caliban.tracing.TracerProvider
 import sttp.capabilities
 import sttp.capabilities.WebSockets
 import sttp.capabilities.zio.ZioStreams
 import sttp.client3.SttpBackend
 import sttp.model.Uri
+import zio.clock.Clock
 import zio.magic._
+import zio.telemetry.opentelemetry.Tracing
 import zio.test.Assertion._
 import zio.test.TestAspect.sequential
 import zio.test._
 import zio.test.environment.TestEnvironment
-import zio.{Managed, Task, ZIO}
+import zio.{Managed, Task, ZIO, ZLayer}
 
 import java.util.UUID
 
 object ServerSpec extends DefaultRunnableSpec {
   import sttp.client3.httpclient.zio.HttpClientZioBackend
+
+  val tracing: ZLayer[Clock, Throwable, Tracing] =
+    ZLayer.wireSome[Clock, Tracing](
+      Tracing.live,
+      TracerProvider.noOp,
+    )
 
   private val apiUrl: Uri = Uri.parse("http://localhost:8080/api/graphql").toOption.get
 
@@ -30,7 +39,7 @@ object ServerSpec extends DefaultRunnableSpec {
       backend: SttpBackend[Task, ZioStreams with capabilities.WebSockets] <- HttpClientZioBackend.managed()
       _                                                                   <- Main.server
       response                                                            <- Managed.fromEffect(test(backend))
-    } yield response).useNow.injectSome[TestEnvironment](PostService.layer)
+    } yield response).useNow.injectSome[TestEnvironment](PostService.layer, tracing)
 
   val createMillPostMutation: SelectionBuilder[RootMutation, Option[String]] =
     Mutation
@@ -39,7 +48,7 @@ object ServerSpec extends DefaultRunnableSpec {
         PostTitleInput("Utilitarianism"),
         PostContentInput(
           "It is better to be a human being dissatisfied than a pig satisfied; better to be Socrates dissatisfied than a fool satisfied. And if the fool, or the pig, is of a different opinion, it is only because they only know their own side of the question."
-        )
+        ),
       )(Post.id(PostId.id))
 
   private val calibanServerSpec =
@@ -77,6 +86,6 @@ object ServerSpec extends DefaultRunnableSpec {
 
   override def spec: ZSpec[TestEnvironment, Any] =
     suite("Server Spec")(
-      calibanServerSpec,
+      calibanServerSpec
     )
 }

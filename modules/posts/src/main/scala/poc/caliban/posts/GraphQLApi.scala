@@ -4,9 +4,11 @@ import caliban.GraphQL.graphQL
 import caliban.schema.GenericSchema
 import caliban.wrappers.Wrappers._
 import caliban.{GraphQL, RootResolver}
+import poc.caliban.tracing.graphql.SchemaTracer
 import zio._
 import zio.duration.durationInt
 import zio.stream.ZStream
+import zio.telemetry.opentelemetry.Tracing
 
 object Operations {
 
@@ -18,7 +20,7 @@ object Operations {
 
   final case class Mutation(
     createPost: CreatePostMutationParams => ZIO[Has[PostService], PostServiceError, Post],
-    deletePost: PostId => ZIO[Has[PostService], PostServiceError, Unit]
+    deletePost: PostId => ZIO[Has[PostService], PostServiceError, Unit],
   )
 
   final case class Subscription(
@@ -37,7 +39,7 @@ object Resolvers {
   private val mutations =
     Mutation(
       createPost = args => PostService(_.createPost(args.authorName, args.title, args.content)),
-      deletePost = id => PostService(_.deletePost(id))
+      deletePost = id => PostService(_.deletePost(id)),
     )
 
   private val subscriptions =
@@ -56,12 +58,13 @@ object Schemas extends GenericSchema[ZEnv with Has[PostService]]
 object GraphQLApi {
   import Schemas._
 
-  val api: GraphQL[ZEnv with Has[PostService]] =
+  val api: GraphQL[ZEnv with Has[PostService] with Tracing] =
     graphQL(Resolvers.resolver) @@
       maxFields(200) @@
       maxDepth(30) @@
       timeout(5.seconds) @@
       printSlowQueries(500.millis) @@
-      printErrors
+      printErrors @@
+      SchemaTracer.rootQueryTracer
 
 }
