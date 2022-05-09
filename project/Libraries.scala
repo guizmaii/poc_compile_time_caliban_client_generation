@@ -3,7 +3,7 @@ import sbt._
 object Libraries {
 
   val calibanVersion       = "1.4.0"
-  val sttpVersion          = "3.5.2"
+  val sttpVersion          = "3.6.1"
   val http4sVersion        = "0.23.11"
   val zioVersion           = "1.0.14"
   val openTelemetryVersion = "1.13.0"
@@ -39,8 +39,8 @@ object Libraries {
   )
 
   val sttp = Seq(
-    "com.softwaremill.sttp.client3" %% "core"                    % sttpVersion,
-    "com.softwaremill.sttp.client3" %% "httpclient-backend-zio1" % sttpVersion,
+    "com.softwaremill.sttp.client3" %% "core" % sttpVersion,
+    "com.softwaremill.sttp.client3" %% "zio1" % sttpVersion,
   )
 
   /**
