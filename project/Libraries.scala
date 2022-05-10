@@ -6,7 +6,7 @@ object Libraries {
   val sttpVersion          = "3.6.1"
   val http4sVersion        = "0.23.11"
   val zioVersion           = "1.0.14"
-  val openTelemetryVersion = "1.13.0"
+  val openTelemetryVersion = "1.14.0"
   val slf4jVersion         = "1.7.36"
 
   val zio          = Seq(
