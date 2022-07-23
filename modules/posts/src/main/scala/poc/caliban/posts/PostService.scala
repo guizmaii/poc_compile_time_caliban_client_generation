@@ -31,25 +31,27 @@ trait PostService {
   def all: ZStream[Any, PostServiceError, Post]
 }
 
-object PostService extends Accessible[PostService] {
-  val layer: ULayer[Has[PostService]] = ZLayer.succeed(new PostServiceLive)
+object PostService {
+  val layer: ULayer[PostService] = ZLayer.succeed(new PostServiceLive)
 }
 
 final class PostServiceLive extends PostService {
   private val db: mutable.Map[PostId, Post] = TrieMap.empty[PostId, Post]
 
-  override def findById(id: PostId): IO[PostServiceError, Option[Post]] = IO(db.get(id)).mapError(SomethingWentWrong)
+  override def findById(id: PostId): IO[PostServiceError, Option[Post]] = ZIO.attempt(db.get(id)).mapError(SomethingWentWrong)
 
   override def createPost(author: AuthorName, title: PostTitle, content: PostContent): IO[PostServiceError, Post] =
-    IO {
-      val newId   = PostId.newRandom
-      val newPost = Post(id = newId, author = author, title = title, content = content)
-      db.put(newId, newPost)
-      newPost
-    }.mapError(SomethingWentWrong)
+    ZIO
+      .attempt {
+        val newId   = PostId.newRandom
+        val newPost = Post(id = newId, author = author, title = title, content = content)
+        db.put(newId, newPost)
+        newPost
+      }
+      .mapError(SomethingWentWrong)
 
   override def deletePost(id: PostId): IO[PostServiceError, Unit] =
-    IO(db.remove(id)).unit.mapError(SomethingWentWrong)
+    ZIO.attempt(db.remove(id)).unit.mapError(SomethingWentWrong)
 
   override def all: ZStream[Any, PostServiceError, Post] =
     ZStream.fromIterable(db.values)

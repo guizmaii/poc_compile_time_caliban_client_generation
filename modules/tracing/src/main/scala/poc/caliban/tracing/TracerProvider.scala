@@ -8,9 +8,8 @@ import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
 import io.opentelemetry.sdk.trace.`export`.BatchSpanProcessor
 import io.opentelemetry.semconv.resource.attributes.ResourceAttributes
-import zio.clock.Clock
-import zio.logging.{Logging, log}
-import zio.{Has, Managed, RLayer, Task, TaskLayer, ZManaged}
+import zio._
+import zio.managed.{ZManaged, ZManagedZIOSyntax}
 
 import java.util.concurrent.TimeUnit
 
@@ -23,48 +22,50 @@ object TracerProvider {
    */
   private def oltp(
     endpoint: String
-  )(serviceName: String, appVersion: String, environment: String): ZManaged[Clock, Throwable, Tracer] =
+  )(serviceName: String, appVersion: String, environment: String): ZManaged[Any, Throwable, Tracer] =
     for {
-      resource       <- Task(
-                          Resource
-                            .builder()
-                            .put(ResourceAttributes.SERVICE_NAME, serviceName)
-                            .put(ResourceAttributes.DEPLOYMENT_ENVIRONMENT, environment)
-                            .build()
-                        ).toManaged_
+      resource       <- ZIO
+                          .attempt(
+                            Resource
+                              .builder()
+                              .put(ResourceAttributes.SERVICE_NAME, serviceName)
+                              .put(ResourceAttributes.DEPLOYMENT_ENVIRONMENT, environment)
+                              .build()
+                          )
+                          .toManaged
       spanExporter   <-
-        ZManaged.fromAutoCloseable(Task(OtlpGrpcSpanExporter.builder.setTimeout(2, TimeUnit.SECONDS).setEndpoint(endpoint).build()))
+        ZManaged.fromAutoCloseable(ZIO.attempt(OtlpGrpcSpanExporter.builder.setTimeout(2, TimeUnit.SECONDS).setEndpoint(endpoint).build()))
       spanProcessor  <-
-        ZManaged.fromAutoCloseable(Task(BatchSpanProcessor.builder(spanExporter).build()))
+        ZManaged.fromAutoCloseable(ZIO.attempt(BatchSpanProcessor.builder(spanExporter).build()))
       tracerProvider <-
-        Managed.make(
-          Task(
+        ZManaged.acquireReleaseWith(
+          ZIO.attempt(
             SdkTracerProvider
               .builder()
               .addSpanProcessor(spanProcessor)
               .setResource(resource)
               .build()
           )
-        )(provider => Task(provider.shutdown()).orDie)
-      openTelemetry  <- Task(OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal()).toManaged_
-      tracer         <- Task(openTelemetry.getTracer(instrumentationName, appVersion)).toManaged_
+        )(provider => ZIO.attempt(provider.shutdown()).orDie)
+      openTelemetry  <- ZIO.attempt(OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal()).toManaged
+      tracer         <- ZIO.attempt(openTelemetry.getTracer(instrumentationName, appVersion)).toManaged
     } yield tracer
 
   def live(maybeHostIp: Option[String])(
     serviceName: String,
     appVersion: String,
     environment: String,
-  ): RLayer[Clock with Logging, Has[Tracer]] =
+  ): TaskLayer[Tracer] =
     maybeHostIp match {
       case Some(hostIp) =>
-        (log.info(s"OpenTelemetry activated. `HOST_IP` is `$hostIp`").toManaged_ *>
+        (ZIO.logInfo(s"OpenTelemetry activated. `HOST_IP` is `$hostIp`").toManaged *>
           oltp(s"http://$hostIp:4317")(serviceName, appVersion, environment)).toLayer
       case None         =>
-        (log.info("OpenTelemetry not activated. No `HOST_IP` envvar detected") *> noOpTask).toLayer
+        ZLayer.fromZIO(ZIO.logInfo("OpenTelemetry not activated. No `HOST_IP` envvar detected") *> noOpTask)
     }
 
-  def noOp: TaskLayer[Has[Tracer]] = noOpTask.toLayer
+  def noOp: TaskLayer[Tracer] = ZLayer.fromZIO(noOpTask)
 
-  private val noOpTask = Task(NoopOpenTelemetry.getInstance().getTracer(instrumentationName))
+  private val noOpTask = ZIO.attempt(NoopOpenTelemetry.getInstance().getTracer(instrumentationName))
 
 }

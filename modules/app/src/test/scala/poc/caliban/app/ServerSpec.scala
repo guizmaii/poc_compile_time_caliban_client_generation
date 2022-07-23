@@ -10,22 +10,20 @@ import sttp.capabilities.WebSockets
 import sttp.capabilities.zio.ZioStreams
 import sttp.client3.SttpBackend
 import sttp.model.Uri
-import zio.clock.Clock
-import zio.magic._
+import zio._
 import zio.telemetry.opentelemetry.Tracing
 import zio.test.Assertion._
 import zio.test.TestAspect.sequential
-import zio.test._
-import zio.test.environment.TestEnvironment
-import zio.{Managed, Task, ZIO, ZLayer}
+import zio.test.{ZIOSpecDefault, _}
 
 import java.util.UUID
 
-object ServerSpec extends DefaultRunnableSpec {
+//noinspection SimplifyAssertInspection
+object ServerSpec extends ZIOSpecDefault {
   import sttp.client3.httpclient.zio.HttpClientZioBackend
 
-  val tracing: ZLayer[Clock, Throwable, Tracing] =
-    ZLayer.wireSome[Clock, Tracing](
+  val tracing: TaskLayer[Tracing] =
+    ZLayer.make[Tracing](
       Tracing.live,
       TracerProvider.noOp,
     )
@@ -34,12 +32,14 @@ object ServerSpec extends DefaultRunnableSpec {
 
   def withServer(
     test: SttpBackend[Task, ZioStreams with WebSockets] => ZIO[TestEnvironment, Throwable, TestResult]
-  ): ZIO[TestEnvironment, Throwable, TestResult] =
-    (for {
-      backend: SttpBackend[Task, ZioStreams with capabilities.WebSockets] <- HttpClientZioBackend.managed()
-      _                                                                   <- Main.server
-      response                                                            <- Managed.fromEffect(test(backend))
-    } yield response).useNow.injectSome[TestEnvironment](PostService.layer, tracing)
+  ): ZIO[TestEnvironment with Scope, Throwable, TestResult] =
+    (
+      for {
+        backend: SttpBackend[Task, ZioStreams with capabilities.WebSockets] <- HttpClientZioBackend.scoped()
+        _                                                                   <- Main.server
+        response                                                            <- test(backend)
+      } yield response
+    ).provideSome[TestEnvironment with zio.Scope](PostService.layer, tracing)
 
   val createMillPostMutation: SelectionBuilder[RootMutation, Option[String]] =
     Mutation
@@ -54,22 +54,22 @@ object ServerSpec extends DefaultRunnableSpec {
   private val calibanServerSpec =
     suite("Caliban server Spec")(
       test("truthiness")(assert(true)(isTrue)),
-      testM("Create a post returns a 200") {
+      test("Create a post returns a 200") {
         withServer { backend =>
           val response = createMillPostMutation.toRequest(apiUrl).send(backend)
-          assertM(response.map(_.code.code))(equalTo(200))
+          assertZIO(response.map(_.code.code))(equalTo(200))
         }
       },
-      testM("Fetch a non existing post returns None") {
+      test("Fetch a non existing post returns None") {
         withServer { backend =>
           val query: SelectionBuilder[RootQuery, Option[String]] = Query.postById(UUID.randomUUID().toString)(Post.id(PostId.id))
 
           val response = query.toRequest(apiUrl).send(backend)
 
-          assertM(response.map(_.body).absolve)(isNone)
+          assertZIO(response.map(_.body).absolve)(isNone)
         }
       },
-      testM("Fetch an existing post returns Some(_)") {
+      test("Fetch an existing post returns Some(_)") {
         withServer { backend =>
           def query(id: String): SelectionBuilder[RootQuery, Option[String]] = Query.postById(id)(Post.author(AuthorName.name))
 
@@ -79,12 +79,12 @@ object ServerSpec extends DefaultRunnableSpec {
               author     <- query(id).toRequest(apiUrl).send(backend).map(_.body).absolve
             } yield author
 
-          assertM(result)(isSome(equalTo("John Stuart Mill")))
+          assertZIO(result)(isSome(equalTo("John Stuart Mill")))
         }
       },
     ) @@ sequential
 
-  override def spec: ZSpec[TestEnvironment, Any] =
+  override def spec: Spec[TestEnvironment with Scope, Throwable] =
     suite("Server Spec")(
       calibanServerSpec
     )
