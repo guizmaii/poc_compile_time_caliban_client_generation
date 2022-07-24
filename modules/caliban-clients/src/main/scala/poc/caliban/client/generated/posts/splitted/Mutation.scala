@@ -24,4 +24,3 @@ object Mutation {
   )(implicit encoder0: ArgEncoder[String]): SelectionBuilder[_root_.caliban.client.Operations.RootMutation, scala.Option[Unit]] =
     _root_.caliban.client.SelectionBuilder.Field("deletePost", OptionOf(Scalar()), arguments = List(Argument("id", id, "ID!")(encoder0)))
 }
-
