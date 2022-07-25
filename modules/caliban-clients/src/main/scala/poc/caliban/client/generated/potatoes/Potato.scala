@@ -8,4 +8,3 @@ object Potato {
     _root_.caliban.client.SelectionBuilder.Field("name", Obj(innerSelection))
   def color: SelectionBuilder[Potato, Color]                                          = _root_.caliban.client.SelectionBuilder.Field("color", Scalar())
 }
-

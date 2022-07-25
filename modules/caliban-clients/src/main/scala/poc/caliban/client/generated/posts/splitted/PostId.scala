@@ -6,4 +6,3 @@ import caliban.client._
 object PostId {
   def id: SelectionBuilder[PostId, String] = _root_.caliban.client.SelectionBuilder.Field("id", Scalar())
 }
-
