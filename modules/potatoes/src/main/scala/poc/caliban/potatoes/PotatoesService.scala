@@ -25,5 +25,3 @@ trait PotatoesService {
   def eradicate(name: Potato.Name): IO[PotatoesServiceError, Unit]
   def all: ZStream[Any, PotatoesServiceError, Potato]
 }
-
-object PotatoesService extends Accessible[PotatoesService]

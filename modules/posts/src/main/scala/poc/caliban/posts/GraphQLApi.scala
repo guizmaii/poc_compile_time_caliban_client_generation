@@ -4,9 +4,7 @@ import caliban.GraphQL.graphQL
 import caliban.schema.GenericSchema
 import caliban.wrappers.Wrappers._
 import caliban.{GraphQL, RootResolver}
-import poc.caliban.tracing.graphql.SchemaTracer
 import zio._
-import zio.duration.durationInt
 import zio.stream.ZStream
 import zio.telemetry.opentelemetry.Tracing
 
@@ -15,16 +13,16 @@ object Operations {
   final case class CreatePostMutationParams(authorName: AuthorName, title: PostTitle, content: PostContent)
 
   final case class Query(
-    postById: PostId => ZIO[Has[PostService], PostServiceError, Option[Post]]
+    postById: PostId => ZIO[PostService, PostServiceError, Option[Post]]
   )
 
   final case class Mutation(
-    createPost: CreatePostMutationParams => ZIO[Has[PostService], PostServiceError, Post],
-    deletePost: PostId => ZIO[Has[PostService], PostServiceError, Unit],
+    createPost: CreatePostMutationParams => ZIO[PostService, PostServiceError, Post],
+    deletePost: PostId => ZIO[PostService, PostServiceError, Unit],
   )
 
   final case class Subscription(
-    allPostsByAuthor: AuthorName => ZStream[Has[PostService], PostServiceError, Post]
+    allPostsByAuthor: AuthorName => ZStream[PostService, PostServiceError, Post]
   )
 }
 
@@ -33,13 +31,13 @@ object Resolvers {
 
   private val queries =
     Query(
-      postById = id => PostService(_.findById(id))
+      postById = id => ZIO.serviceWithZIO[PostService](_.findById(id))
     )
 
   private val mutations =
     Mutation(
-      createPost = args => PostService(_.createPost(args.authorName, args.title, args.content)),
-      deletePost = id => PostService(_.deletePost(id)),
+      createPost = args => ZIO.serviceWithZIO[PostService](_.createPost(args.authorName, args.title, args.content)),
+      deletePost = id => ZIO.serviceWithZIO[PostService](_.deletePost(id)),
     )
 
   private val subscriptions =
@@ -53,18 +51,17 @@ object Resolvers {
   val resolver: RootResolver[Query, Mutation, Subscription] = RootResolver(queries, mutations, subscriptions)
 }
 
-object Schemas extends GenericSchema[ZEnv with Has[PostService]]
+object Schemas extends GenericSchema[PostService]
 
 object GraphQLApi {
   import Schemas._
 
-  val api: GraphQL[ZEnv with Has[PostService] with Tracing] =
+  val api: GraphQL[PostService with Tracing] =
     graphQL(Resolvers.resolver) @@
       maxFields(200) @@
       maxDepth(30) @@
       timeout(5.seconds) @@
       printSlowQueries(500.millis) @@
-      printErrors @@
-      SchemaTracer.rootQueryTracer
+      printErrors
 
 }

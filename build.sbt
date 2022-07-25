@@ -19,7 +19,7 @@ ThisBuild / scalafixDependencies ++= List(
   "com.github.vovapolu" %% "scaluzzi" % "0.1.21"
 )
 ThisBuild / resolvers += Resolver.mavenLocal
-ThisBuild / resolvers += Resolver.sonatypeRepo("snapshots")
+ThisBuild / resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 // ### Aliases ###
 
@@ -57,7 +57,7 @@ lazy val app =
     .settings(sbtDatadogSettings: _*)
     .settings(dockerSettings: _*)
     .settings(Compile / mainClass := Some("poc.caliban.app.Main"))
-    .settings(libraryDependencies ++= Seq(zioMagic) ++ calibanLib ++ sttp.map(_ % Test))
+    .settings(libraryDependencies ++= Seq(zio) ++ calibanLib ++ sttp.map(_ % Test))
     .dependsOn(posts, tracing, calibanClients % Test)
 
 lazy val posts =
@@ -128,4 +128,4 @@ lazy val tracing =
     .in(file("modules/tracing"))
     .disablePlugins(RevolverPlugin)
     .settings(commonSettings: _*)
-    .settings(libraryDependencies ++= Seq(zioTelemetry) ++ zio ++ openTelemetryExporter ++ calibanLib ++ logging)
+    .settings(libraryDependencies ++= Seq(zioTelemetry, zio, zioManaged) ++ openTelemetryExporter ++ calibanLib ++ logging)
