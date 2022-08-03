@@ -9,4 +9,3 @@ object Query {
   ): SelectionBuilder[_root_.caliban.client.Operations.RootQuery, scala.Option[A]] = _root_.caliban.client.SelectionBuilder
     .Field("postById", OptionOf(Obj(innerSelection)), arguments = List(Argument("id", id, "ID!")(encoder0)))
 }
-

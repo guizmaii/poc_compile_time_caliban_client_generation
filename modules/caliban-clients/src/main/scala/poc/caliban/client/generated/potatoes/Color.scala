@@ -27,4 +27,3 @@ object Color {
 
   val values: scala.collection.immutable.Vector[Color] = scala.collection.immutable.Vector(Purple, Red, White, Yellow)
 }
-

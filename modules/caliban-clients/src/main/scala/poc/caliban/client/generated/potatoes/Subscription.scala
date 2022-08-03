@@ -9,4 +9,3 @@ object Subscription {
   ): SelectionBuilder[_root_.caliban.client.Operations.RootSubscription, scala.Option[A]] =
     _root_.caliban.client.SelectionBuilder.Field("allPotatoes", OptionOf(Obj(innerSelection)))
 }
-

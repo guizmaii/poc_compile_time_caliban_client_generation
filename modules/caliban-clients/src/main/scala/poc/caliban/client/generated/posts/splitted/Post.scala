@@ -13,4 +13,3 @@ object Post {
   def content[A](innerSelection: SelectionBuilder[PostContent, A]): SelectionBuilder[Post, A] =
     _root_.caliban.client.SelectionBuilder.Field("content", Obj(innerSelection))
 }
-

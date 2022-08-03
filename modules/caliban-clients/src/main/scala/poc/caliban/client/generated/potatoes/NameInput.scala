@@ -10,4 +10,3 @@ object NameInput {
       __ObjectValue(List("value" -> implicitly[ArgEncoder[String]].encode(value.value)))
   }
 }
-
