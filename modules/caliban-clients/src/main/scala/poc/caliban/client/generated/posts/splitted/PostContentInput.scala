@@ -10,4 +10,3 @@ object PostContentInput {
       __ObjectValue(List("content" -> implicitly[ArgEncoder[String]].encode(value.content)))
   }
 }
-

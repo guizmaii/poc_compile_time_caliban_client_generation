@@ -13,4 +13,3 @@ object Query {
   ): SelectionBuilder[_root_.caliban.client.Operations.RootQuery, scala.Option[List[A]]] = _root_.caliban.client.SelectionBuilder
     .Field("byColor", OptionOf(ListOf(Obj(innerSelection))), arguments = List(Argument("value", value, "Color!")(encoder0)))
 }
-

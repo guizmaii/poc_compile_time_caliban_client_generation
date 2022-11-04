@@ -17,4 +17,3 @@ object Mutation {
   ): SelectionBuilder[_root_.caliban.client.Operations.RootMutation, scala.Option[Unit]] = _root_.caliban.client.SelectionBuilder
     .Field("eradicate", OptionOf(Scalar()), arguments = List(Argument("value", value, "String!")(encoder0)))
 }
-
