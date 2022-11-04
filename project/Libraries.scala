@@ -14,7 +14,7 @@ object Libraries {
     "io.github.kitlangton" %% "zio-magic" % "0.3.12",
   )
   val zioMagic     = "io.github.kitlangton" %% "zio-magic"         % "0.3.12"
-  val zioTelemetry = "dev.zio"              %% "zio-opentelemetry" % "1.0.0"
+  val zioTelemetry = "dev.zio"              %% "zio-opentelemetry" % "2.0.3"
 
   val logging = Seq(
     "dev.zio"             %% "zio-logging-slf4j"        % "0.5.14",
