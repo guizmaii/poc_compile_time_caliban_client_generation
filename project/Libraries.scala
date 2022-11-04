@@ -5,7 +5,7 @@ object Libraries {
   val calibanVersion       = "1.4.3"
   val sttpVersion          = "3.7.1"
   val http4sVersion        = "0.23.11"
-  val zioVersion           = "1.0.16"
+  val zioVersion           = "1.0.17"
   val openTelemetryVersion = "1.16.0"
   val slf4jVersion         = "1.7.36"
 
