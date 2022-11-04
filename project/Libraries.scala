@@ -17,7 +17,7 @@ object Libraries {
   val zioTelemetry = "dev.zio"              %% "zio-opentelemetry" % "1.0.0"
 
   val logging = Seq(
-    "dev.zio"             %% "zio-logging-slf4j"        % "0.5.14",
+    "dev.zio"             %% "zio-logging-slf4j"        % "2.1.3",
     "ch.qos.logback"       % "logback-classic"          % "1.2.11",
     "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
     "org.slf4j"            % "jul-to-slf4j"             % slf4jVersion,
