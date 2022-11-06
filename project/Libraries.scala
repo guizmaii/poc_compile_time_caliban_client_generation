@@ -7,7 +7,7 @@ object Libraries {
   val http4sVersion        = "0.23.11"
   val zioVersion           = "1.0.16"
   val openTelemetryVersion = "1.16.0"
-  val slf4jVersion         = "1.7.36"
+  val slf4jVersion         = "2.0.3"
 
   val zio          = Seq(
     "dev.zio"              %% "zio"       % zioVersion,
