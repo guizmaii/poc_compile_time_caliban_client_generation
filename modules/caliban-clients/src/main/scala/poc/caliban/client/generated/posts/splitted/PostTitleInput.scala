@@ -10,4 +10,3 @@ object PostTitleInput {
       __ObjectValue(List("title" -> implicitly[ArgEncoder[String]].encode(value.title)))
   }
 }
-

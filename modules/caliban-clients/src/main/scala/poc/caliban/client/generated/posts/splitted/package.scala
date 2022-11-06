@@ -12,4 +12,3 @@ package object splitted {
   type Mutation     = _root_.caliban.client.Operations.RootMutation
   type Subscription = _root_.caliban.client.Operations.RootSubscription
 }
-
